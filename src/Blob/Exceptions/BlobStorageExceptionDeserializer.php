@@ -26,18 +26,28 @@ final class BlobStorageExceptionDeserializer implements RequestExceptionDeserial
             return $e;
         }
 
-        return match ($error->code) {
-            'AuthenticationFailed' => new AuthenticationFailedException($error->message, previous: $e),
-            'AuthorizationFailure' => new AuthorizationFailedException($error->message, previous: $e),
-            'ContainerNotFound' => new ContainerNotFoundException($error->message, previous: $e),
-            'ContainerAlreadyExists' => new ContainerAlreadyExistsException($error->message, previous: $e),
-            'BlobNotFound' => new BlobNotFoundException($error->message, previous: $e),
-            'InvalidBlockList' => new InvalidBlockListException($error->message, previous: $e),
-            'TagsTooLarge' => new TagsTooLargeException($error->message, previous: $e),
-            'CannotVerifyCopySource' => new CannotVerifyCopySourceException($error->message, previous: $e),
-            'NoPendingCopyOperation' => new NoPendingCopyOperationException($error->message, previous: $e),
-            default => new BlobStorageException($error->message, previous: $e),
-        };
+        switch ($error->code) {
+            case 'AuthenticationFailed':
+                return new AuthenticationFailedException($error->message, 0, $e);
+            case 'AuthorizationFailure':
+                return new AuthorizationFailedException($error->message, 0, $e);
+            case 'ContainerNotFound':
+                return new ContainerNotFoundException($error->message, 0, $e);
+            case 'ContainerAlreadyExists':
+                return new ContainerAlreadyExistsException($error->message, 0, $e);
+            case 'BlobNotFound':
+                return new BlobNotFoundException($error->message, 0, $e);
+            case 'InvalidBlockList':
+                return new InvalidBlockListException($error->message, 0, $e);
+            case 'TagsTooLarge':
+                return new TagsTooLargeException($error->message, 0, $e);
+            case 'CannotVerifyCopySource':
+                return new CannotVerifyCopySourceException($error->message, 0, $e);
+            case 'NoPendingCopyOperation':
+                return new NoPendingCopyOperationException($error->message, 0, $e);
+            default:
+                return new BlobStorageException($error->message, 0, $e);
+        }
     }
 
     public function getErrorResponseFromHeaders(ResponseInterface $response): ?ErrorResponse

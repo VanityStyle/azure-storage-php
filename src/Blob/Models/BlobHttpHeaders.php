@@ -6,14 +6,21 @@ namespace AzureOss\Storage\Blob\Models;
 
 final class BlobHttpHeaders
 {
-    public function __construct(
-        public string $cacheControl = "",
-        public string $contentDisposition = "",
-        public string $contentEncoding = "",
-        public string $contentHash = "",
-        public string $contentLanguage = "",
-        public string $contentType = "",
-    ) {}
+    public string $cacheControl = "";
+    public string $contentDisposition = "";
+    public string $contentEncoding = "";
+    public string $contentHash = "";
+    public string $contentLanguage = "";
+    public string $contentType = "";
+    public function __construct(string $cacheControl = "", string $contentDisposition = "", string $contentEncoding = "", string $contentHash = "", string $contentLanguage = "", string $contentType = "")
+    {
+        $this->cacheControl = $cacheControl;
+        $this->contentDisposition = $contentDisposition;
+        $this->contentEncoding = $contentEncoding;
+        $this->contentHash = $contentHash;
+        $this->contentLanguage = $contentLanguage;
+        $this->contentType = $contentType;
+    }
 
     /**
      * @internal

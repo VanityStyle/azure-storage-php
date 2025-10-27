@@ -9,14 +9,30 @@ use AzureOss\Storage\Blob\Helpers\DeprecationHelper;
 final class TaggedBlob
 {
     /**
+     * @readonly
+     */
+    public string $name;
+    /**
+     * @readonly
+     */
+    public string $containerName;
+    /**
+     * @var array<string>
+     * @readonly
+     */
+    public array $tags;
+    /**
      * @deprecated will be private in version 2
      * @param array<string> $tags
      */
     public function __construct(
-        public readonly string $name,
-        public readonly string $containerName,
-        public readonly array $tags,
+        string $name,
+        string $containerName,
+        array $tags
     ) {
+        $this->name = $name;
+        $this->containerName = $containerName;
+        $this->tags = $tags;
         DeprecationHelper::constructorWillBePrivate(self::class, '2.0');
     }
 

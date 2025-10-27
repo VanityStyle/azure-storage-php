@@ -9,12 +9,22 @@ use AzureOss\Storage\Blob\Helpers\DeprecationHelper;
 final class BlobContainer
 {
     /**
+     * @readonly
+     */
+    public string $name;
+    /**
+     * @readonly
+     */
+    public BlobContainerProperties $properties;
+    /**
      * @deprecated will be private in version 2
      */
     public function __construct(
-        public readonly string $name,
-        public readonly BlobContainerProperties $properties,
+        string $name,
+        BlobContainerProperties $properties
     ) {
+        $this->name = $name;
+        $this->properties = $properties;
         DeprecationHelper::constructorWillBePrivate(self::class, '2.0');
     }
 

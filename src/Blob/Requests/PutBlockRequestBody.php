@@ -10,11 +10,16 @@ namespace AzureOss\Storage\Blob\Requests;
 final class PutBlockRequestBody
 {
     /**
+     * @var string[]
+     */
+    public array $base64BlockIds;
+    /**
      * @param string[] $base64BlockIds
      */
-    public function __construct(
-        public array $base64BlockIds,
-    ) {}
+    public function __construct(array $base64BlockIds)
+    {
+        $this->base64BlockIds = $base64BlockIds;
+    }
 
     public function toXml(): \SimpleXMLElement
     {

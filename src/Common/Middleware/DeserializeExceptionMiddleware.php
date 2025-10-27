@@ -13,7 +13,11 @@ use Psr\Http\Message\RequestInterface;
  */
 final class DeserializeExceptionMiddleware
 {
-    public function __construct(private RequestExceptionDeserializer $exceptionDeserializer) {}
+    private RequestExceptionDeserializer $exceptionDeserializer;
+    public function __construct(RequestExceptionDeserializer $exceptionDeserializer)
+    {
+        $this->exceptionDeserializer = $exceptionDeserializer;
+    }
 
     public function __invoke(callable $handler): \Closure
     {

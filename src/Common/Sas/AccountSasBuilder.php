@@ -41,21 +41,30 @@ final class AccountSasBuilder
         return $this;
     }
 
-    public function setServices(string|AccountSasServices $services): AccountSasBuilder
+    /**
+     * @param string|\AzureOss\Storage\Common\Sas\AccountSasServices $services
+     */
+    public function setServices($services): AccountSasBuilder
     {
         $this->services = (string) $services;
 
         return $this;
     }
 
-    public function setResourceTypes(string|AccountSasResourceTypes $resourceTypes): AccountSasBuilder
+    /**
+     * @param string|\AzureOss\Storage\Common\Sas\AccountSasResourceTypes $resourceTypes
+     */
+    public function setResourceTypes($resourceTypes): AccountSasBuilder
     {
         $this->resourceTypes = (string) $resourceTypes;
 
         return $this;
     }
 
-    public function setPermissions(string|AccountSasPermissions $permissions): AccountSasBuilder
+    /**
+     * @param string|\AzureOss\Storage\Common\Sas\AccountSasPermissions $permissions
+     */
+    public function setPermissions($permissions): AccountSasBuilder
     {
         $this->permissions = (string) $permissions;
 
@@ -102,8 +111,8 @@ final class AccountSasBuilder
         $signedStart = $this->startsOn !== null ? DateHelper::formatAs8601Zulu($this->startsOn) : null;
         $signedExpiry = DateHelper::formatAs8601Zulu($this->expiresOn);
         $signedIp = $this->ipRange !== null ? (string) $this->ipRange : null;
-        $signedProtocol = $this->protocol?->value;
-        $signedVersion = $this->version ?? ApiVersion::LATEST->value;
+        $signedProtocol = ($nullsafeVariable1 = $this->protocol) ? $nullsafeVariable1->value : null;
+        $signedVersion = $this->version ?? ApiVersion::LATEST;
 
         $stringToSign = [
             $sharedKeyCredential->accountName,

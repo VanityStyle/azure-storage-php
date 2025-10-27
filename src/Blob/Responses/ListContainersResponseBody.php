@@ -12,15 +12,37 @@ use AzureOss\Storage\Blob\Models\BlobContainer;
 final class ListContainersResponseBody
 {
     /**
+     * @readonly
+     */
+    public string $prefix;
+    /**
+     * @readonly
+     */
+    public string $marker;
+    /**
+     * @readonly
+     */
+    public int $maxResults;
+    /**
+     * @readonly
+     */
+    public string $nextMarker;
+    /**
+     * @var BlobContainer[]
+     * @readonly
+     */
+    public array $containers;
+    /**
      * @param BlobContainer[] $containers
      */
-    private function __construct(
-        public readonly string $prefix,
-        public readonly string $marker,
-        public readonly int $maxResults,
-        public readonly string $nextMarker,
-        public readonly array $containers,
-    ) {}
+    private function __construct(string $prefix, string $marker, int $maxResults, string $nextMarker, array $containers)
+    {
+        $this->prefix = $prefix;
+        $this->marker = $marker;
+        $this->maxResults = $maxResults;
+        $this->nextMarker = $nextMarker;
+        $this->containers = $containers;
+    }
 
     public static function fromXml(\SimpleXMLElement $xml): self
     {

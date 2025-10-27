@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace AzureOss\Storage\Blob\Models;
 
-enum CopyStatus: string
+class CopyStatus
 {
-    case PENDING = 'pending';
-    case SUCCESS = 'success';
-    case ABORTED = 'aborted';
-    case FAILED = 'failed';
+    public const PENDING = 'pending';
+    public const SUCCESS = 'success';
+    public const ABORTED = 'aborted';
+    public const FAILED = 'failed';
 }

@@ -12,14 +12,16 @@ use Psr\Http\Message\RequestInterface;
  */
 final class AddXMsVersionMiddleware
 {
-    public function __construct(
-        private ApiVersion $version,
-    ) {}
+    private string $version;
+    public function __construct(string $version)
+    {
+        $this->version = $version;
+    }
 
     public function __invoke(callable $handler): \Closure
     {
         return function (RequestInterface $request, array $options) use ($handler) {
-            $request = $request->withHeader('x-ms-version', $this->version->value);
+            $request = $request->withHeader('x-ms-version', $this->version);
 
             return $handler($request, $options);
         };

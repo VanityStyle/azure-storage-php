@@ -10,34 +10,28 @@ use PHPUnit\Framework\TestCase;
 
 class BlobSasPermissionsTest extends TestCase
 {
-    #[Test]
     public function to_string_works(): void
     {
         $permissions = new BlobSasPermissions();
-
         self::assertEquals("", (string) $permissions);
-
-        $permissions = new BlobSasPermissions(read: true, delete: true);
-
+        $permissions = new BlobSasPermissions(true, false, false, false, true);
         self::assertEquals("rd", (string) $permissions);
-
         $permissions = new BlobSasPermissions(
-            read: true,
-            add: true,
-            create: true,
-            write: true,
-            delete: true,
-            deleteVersion: true,
-            permanentDelete: true,
-            tags: true,
-            list: true,
-            move: true,
-            execute: true,
-            ownership: true,
-            permissions: true,
-            setImmutabilityPolicy: true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
         );
-
         self::assertEquals("racwdxyltmeopi", (string) $permissions);
     }
 }

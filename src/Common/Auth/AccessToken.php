@@ -6,8 +6,17 @@ namespace AzureOss\Storage\Common\Auth;
 
 final class AccessToken
 {
-    public function __construct(
-        public readonly string $accessToken,
-        public readonly \DateTimeInterface $expiresOn,
-    ) {}
+    /**
+     * @readonly
+     */
+    public string $accessToken;
+    /**
+     * @readonly
+     */
+    public \DateTimeInterface $expiresOn;
+    public function __construct(string $accessToken, \DateTimeInterface $expiresOn)
+    {
+        $this->accessToken = $accessToken;
+        $this->expiresOn = $expiresOn;
+    }
 }

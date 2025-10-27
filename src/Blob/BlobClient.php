@@ -41,13 +41,34 @@ use Psr\Http\Message\UriInterface;
 
 final class BlobClient
 {
-    private readonly Client $client;
+    /**
+     * @readonly
+     */
+    public UriInterface $uri;
+    /**
+     * @var \AzureOss\Storage\Common\Auth\StorageSharedKeyCredential|\AzureOss\Storage\Common\Auth\TokenCredential|null
+     * @readonly
+     */
+    public $credential = null;
+    /**
+     * @readonly
+     */
+    private Client $client;
 
-    private readonly BlockBlobClient $blockBlobClient;
+    /**
+     * @readonly
+     */
+    private BlockBlobClient $blockBlobClient;
 
-    public readonly string $containerName;
+    /**
+     * @readonly
+     */
+    public string $containerName;
 
-    public readonly string $blobName;
+    /**
+     * @readonly
+     */
+    public string $blobName;
 
     /**
      * @deprecated Use $credential instead.
@@ -56,12 +77,16 @@ final class BlobClient
 
     /**
      * @throws InvalidBlobUriException
+     * @param \AzureOss\Storage\Common\Auth\StorageSharedKeyCredential|\AzureOss\Storage\Common\Auth\TokenCredential|null $credential
      */
     public function __construct(
-        public readonly UriInterface $uri,
-        public readonly StorageSharedKeyCredential|TokenCredential|null $credential = null,
-        BlobClientOptions $options = new BlobClientOptions(),
+        UriInterface $uri,
+        $credential = null,
+        ?BlobClientOptions $options = null
     ) {
+        $options ??= new BlobClientOptions();
+        $this->uri = $uri;
+        $this->credential = $credential;
         $this->containerName = BlobUriParserHelper::getContainerName($uri);
         $this->blobName = BlobUriParserHelper::getBlobName($uri);
         $this->client = (new ClientFactory())->create($uri, $credential, new BlobStorageExceptionDeserializer(), $options->httpClientOptions);
@@ -85,7 +110,7 @@ final class BlobClient
             ->getAsync($this->uri, [
                 RequestOptions::STREAM => true,
             ])
-            ->then(BlobDownloadStreamingResult::fromResponse(...));
+            ->then(\Closure::fromCallable([BlobDownloadStreamingResult::class, 'fromResponse']));
     }
 
     public function getProperties(): BlobProperties
@@ -98,7 +123,7 @@ final class BlobClient
     {
         return $this->client
             ->headAsync($this->uri)
-            ->then(BlobProperties::fromResponseHeaders(...));
+            ->then(\Closure::fromCallable([BlobProperties::class, 'fromResponseHeaders']));
     }
 
     /**
@@ -225,11 +250,7 @@ final class BlobClient
     {
         return $this->client
             ->putAsync($this->uri, [
-                RequestOptions::HEADERS => array_filter([
-                    'x-ms-blob-type' => 'BlockBlob',
-                    'Content-Length' => $content->getSize(),
-                    ...$options->httpHeaders->toArray(),
-                ], fn($value) => $value !== null),
+                RequestOptions::HEADERS => array_filter(array_merge(['x-ms-blob-type' => 'BlockBlob', 'Content-Length' => $content->getSize()], $options->httpHeaders->toArray()), fn($value) => $value !== null),
                 RequestOptions::BODY => $content,
             ]);
     }
@@ -269,7 +290,7 @@ final class BlobClient
 
                     return $this->blockBlobClient->commitBlockListAsync(
                         $blockIds,
-                        new CommitBlockListOptions(httpHeaders: $options->httpHeaders),
+                        new CommitBlockListOptions($options->httpHeaders),
                     );
                 },
             );
@@ -310,7 +331,7 @@ final class BlobClient
 
                     return $this->blockBlobClient->commitBlockListAsync(
                         $blockIds,
-                        new CommitBlockListOptions(httpHeaders: $options->httpHeaders),
+                        new CommitBlockListOptions($options->httpHeaders),
                     );
                 },
             );
@@ -360,7 +381,7 @@ final class BlobClient
                     'x-ms-requires-sync' => 'true',
                 ],
             ])
-            ->then(BlobCopyResult::fromResponse(...));
+            ->then(\Closure::fromCallable([BlobCopyResult::class, 'fromResponse']));
     }
 
     /**
@@ -383,7 +404,7 @@ final class BlobClient
                     'x-ms-copy-source' => (string) $source,
                 ],
             ])
-            ->then(BlobCopyResult::fromResponse(...));
+            ->then(\Closure::fromCallable([BlobCopyResult::class, 'fromResponse']));
     }
 
     /**

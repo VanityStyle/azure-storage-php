@@ -11,12 +11,22 @@ use Psr\Http\Message\StreamInterface;
 final class BlobDownloadStreamingResult
 {
     /**
+     * @readonly
+     */
+    public StreamInterface $content;
+    /**
+     * @readonly
+     */
+    public BlobProperties $properties;
+    /**
      * @deprecated will be private in version 2
      */
     public function __construct(
-        public readonly StreamInterface $content,
-        public readonly BlobProperties $properties,
+        StreamInterface $content,
+        BlobProperties $properties
     ) {
+        $this->content = $content;
+        $this->properties = $properties;
         DeprecationHelper::constructorWillBePrivate(self::class, '2.0');
     }
 

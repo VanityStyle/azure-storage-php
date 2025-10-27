@@ -6,10 +6,19 @@ namespace AzureOss\Storage\Common\Sas;
 
 final class SasIpRange
 {
-    public function __construct(
-        public readonly string $start,
-        public readonly ?string $end = null,
-    ) {}
+    /**
+     * @readonly
+     */
+    public string $start;
+    /**
+     * @readonly
+     */
+    public ?string $end = null;
+    public function __construct(string $start, ?string $end = null)
+    {
+        $this->start = $start;
+        $this->end = $end;
+    }
 
     public function __toString(): string
     {

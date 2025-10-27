@@ -12,11 +12,16 @@ use AzureOss\Storage\Blob\Helpers\DeprecationHelper;
 final class BlobPrefix
 {
     /**
+     * @readonly
+     */
+    public string $name;
+    /**
      * @deprecated will be private in version 2
      */
     public function __construct(
-        public readonly string $name,
+        string $name
     ) {
+        $this->name = $name;
         DeprecationHelper::constructorWillBePrivate(self::class, '2.0');
     }
 

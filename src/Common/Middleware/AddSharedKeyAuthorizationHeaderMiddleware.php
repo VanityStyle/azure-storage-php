@@ -13,6 +13,10 @@ use Psr\Http\Message\RequestInterface;
  */
 final class AddSharedKeyAuthorizationHeaderMiddleware
 {
+    /**
+     * @readonly
+     */
+    private StorageSharedKeyCredential $sharedKeyCredential;
     private const INCLUDED_HEADERS = [
         'Content-Encoding',
         'Content-Language',
@@ -27,7 +31,10 @@ final class AddSharedKeyAuthorizationHeaderMiddleware
         'Range',
     ];
 
-    public function __construct(private readonly StorageSharedKeyCredential $sharedKeyCredential) {}
+    public function __construct(StorageSharedKeyCredential $sharedKeyCredential)
+    {
+        $this->sharedKeyCredential = $sharedKeyCredential;
+    }
 
     public function __invoke(callable $handler): \Closure
     {
@@ -80,7 +87,7 @@ final class AddSharedKeyAuthorizationHeaderMiddleware
 
             // Retrieve all headers for the resource that begin with x-ms-,
             // including the x-ms-date header.
-            if (str_starts_with($header, 'x-ms-')) {
+            if (strncmp($header, 'x-ms-', strlen('x-ms-')) === 0) {
                 // Unfold the string by replacing any breaking white space
                 // (meaning what splits the headers, which is \r\n) with a single
                 // space.

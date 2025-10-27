@@ -11,34 +11,27 @@ use PhpBench\Attributes\AfterClassMethods;
 use PhpBench\Attributes\Assert;
 use PhpBench\Attributes\ParamProviders;
 
-#[AfterClassMethods('cleanTestFiles')]
 final class BlobClientBench
 {
     public static function cleanTestFiles(): void
     {
         FileFactory::clean();
     }
-
     /**
      * @param array{ path: string, count: int } $params
      */
-    #[ParamProviders('provideFiles')]
-    #[Assert("mode(variant.mem.peak) < 15 megabytes")]
     public function benchUpload(array $params): void
     {
         $serviceClient = BlobServiceClient::fromConnectionString("UseDevelopmentStorage=true");
         $containerClient = $serviceClient->getContainerClient("benchmark");
         $containerClient->createIfNotExists();
-
         $blobClient = $containerClient->getBlobClient("benchmark");
-
         for ($i = 0; $i < $params['count']; $i++) {
             $file = Utils::tryFopen($params['path'], 'r');
 
             $blobClient->upload($file);
         }
     }
-
     public function provideFiles(): \Generator
     {
         yield '20x10KB' => ['path' => FileFactory::create(10_000), 'count' => 100];

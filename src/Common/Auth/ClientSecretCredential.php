@@ -13,11 +13,24 @@ use GuzzleHttp\RequestOptions;
  */
 final class ClientSecretCredential implements TokenCredential
 {
-    public function __construct(
-        private readonly string $tenantId,
-        private readonly string $clientId,
-        private readonly string $clientSecret,
-    ) {}
+    /**
+     * @readonly
+     */
+    private string $tenantId;
+    /**
+     * @readonly
+     */
+    private string $clientId;
+    /**
+     * @readonly
+     */
+    private string $clientSecret;
+    public function __construct(string $tenantId, string $clientId, string $clientSecret)
+    {
+        $this->tenantId = $tenantId;
+        $this->clientId = $clientId;
+        $this->clientSecret = $clientSecret;
+    }
 
     public function getToken(): AccessToken
     {

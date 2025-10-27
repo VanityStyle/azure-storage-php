@@ -12,13 +12,24 @@ use Psr\Http\Message\ResponseInterface;
 final class BlobContainerProperties
 {
     /**
+     * @readonly
+     */
+    public \DateTimeInterface $lastModified;
+    /**
+     * @var array<string>
+     * @readonly
+     */
+    public array $metadata;
+    /**
      * @deprecated will be private in version 2
      * @param array<string> $metadata
      */
     public function __construct(
-        public readonly \DateTimeInterface $lastModified,
-        public readonly array $metadata,
+        \DateTimeInterface $lastModified,
+        array $metadata
     ) {
+        $this->lastModified = $lastModified;
+        $this->metadata = $metadata;
         DeprecationHelper::constructorWillBePrivate(self::class, '2.0');
     }
 

@@ -36,61 +36,52 @@ class MockBlobClientTest extends TestCase
         Server::stop();
     }
 
-    #[Test]
     public function upload_single_sends_correct_amount_of_requests(): void
     {
         $this->expectNotToPerformAssertions();
-
         Server::enqueue([
             new Response(200), // only one request
             new Response(501), // fail if more requests
         ]);
-
         FileFactory::withStream(1000, function (StreamInterface $file) {
-            $this->mockBlobClient->upload($file, new UploadBlobOptions("text/plain", initialTransferSize: 2000));
+            $this->mockBlobClient->upload($file, new UploadBlobOptions("text/plain", 2000));
         });
     }
 
-    #[Test]
     public function upload_parallel_blocks_sends_correct_amount_of_requests(): void
     {
-        $this->expectNotToPerformAssertions(); // should not throw because of the 501
-
-        Server::enqueue([
-            ...array_fill(0, 11, new Response(200)), // 10 chunks + 1 commit request
-            new Response(501), // fail if more requests
-        ]);
-
+        $this->expectNotToPerformAssertions();
+        // should not throw because of the 501
+        Server::enqueue(array_merge(array_fill(0, 11, new Response(200)), [
+            // 10 chunks + 1 commit request
+            new Response(501),
+        ]));
         FileFactory::withStream(50_000_000, function (StreamInterface $file) {
-            $this->mockBlobClient->upload($file, new UploadBlobOptions("text/plain", initialTransferSize: 0, maximumTransferSize: 5_000_000));
+            $this->mockBlobClient->upload($file, new UploadBlobOptions("text/plain", 0, 5_000_000));
         });
     }
 
-    #[Test]
     public function upload_parallel_blocks_sends_correct_amount_of_requests_for_small_files(): void
     {
-        $this->expectNotToPerformAssertions(); // should not throw because of the 501
-
-        Server::enqueue([
-            ...array_fill(0, 2, new Response(200)), // 1 chunks + 1 commit request
-            new Response(501), // fail if more requests
-        ]);
-
+        $this->expectNotToPerformAssertions();
+        // should not throw because of the 501
+        Server::enqueue(array_merge(array_fill(0, 2, new Response(200)), [
+            // 1 chunks + 1 commit request
+            new Response(501),
+        ]));
         FileFactory::withStream(50_000, function (StreamInterface $file) {
-            $this->mockBlobClient->upload($file, new UploadBlobOptions("text/plain", initialTransferSize: 0, maximumTransferSize: 8_000_000));
+            $this->mockBlobClient->upload($file, new UploadBlobOptions("text/plain", 0, 8_000_000));
         });
     }
 
-    #[Test]
     public function upload_sequential_blocks_sends_correct_amount_of_requests(): void
     {
-        $this->expectNotToPerformAssertions(); // should not throw because of the 501
-
-        Server::enqueue([
-            ...array_fill(0, 11, new Response(200)), // 10 chunks + 1 commit request
-            new Response(501), // fail if more requests
-        ]);
-
+        $this->expectNotToPerformAssertions();
+        // should not throw because of the 501
+        Server::enqueue(array_merge(array_fill(0, 11, new Response(200)), [
+            // 10 chunks + 1 commit request
+            new Response(501),
+        ]));
         FileFactory::withStream(50_000_000, function (StreamInterface $file) {
             $stream = new class ($file) implements StreamInterface {
                 use StreamDecoratorTrait;
@@ -101,28 +92,23 @@ class MockBlobClientTest extends TestCase
                 }
             };
 
-            $this->mockBlobClient->upload($stream, new UploadBlobOptions("text/plain", initialTransferSize: 0, maximumTransferSize: 5_000_000));
+            $this->mockBlobClient->upload($stream, new UploadBlobOptions("text/plain", 0, 5_000_000));
         });
     }
 
-    #[Test]
     public function upload_parallel_blocks_sends_correct_amount_of_requests_with_a_network_request(): void
     {
-        $this->expectNotToPerformAssertions(); // should not throw because of the 501
-
-        Server::enqueue([
-            new Response(200, body: str_repeat('X', 50_000_000)), // stream for fopen
-            ...array_fill(0, 20, new Response(200)), // with network streams some chunks in the beginning are smaller. It should be less than 20 requests still.
-            new Response(501), // fail if more requests
-        ]);
-
+        $this->expectNotToPerformAssertions();
+        // should not throw because of the 501
+        Server::enqueue(array_merge([new Response(200, [], str_repeat('X', 50_000_000))], array_fill(0, 20, new Response(200)), [
+            // with network streams some chunks in the beginning are smaller. It should be less than 20 requests still.
+            new Response(501),
+        ]));
         /** @phpstan-ignore-next-line */
         $stream = fopen(Server::$url, 'r');
-
         if ($stream === false) {
             self::fail();
         }
-
-        $this->mockBlobClient->upload($stream, new UploadBlobOptions("text/plain", initialTransferSize: 0, maximumTransferSize: 5_000_000));
+        $this->mockBlobClient->upload($stream, new UploadBlobOptions("text/plain", 0, 5_000_000));
     }
 }

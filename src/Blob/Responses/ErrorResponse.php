@@ -9,10 +9,19 @@ namespace AzureOss\Storage\Blob\Responses;
  */
 final class ErrorResponse
 {
-    public function __construct(
-        public readonly string $code,
-        public readonly string $message,
-    ) {}
+    /**
+     * @readonly
+     */
+    public string $code;
+    /**
+     * @readonly
+     */
+    public string $message;
+    public function __construct(string $code, string $message)
+    {
+        $this->code = $code;
+        $this->message = $message;
+    }
 
     public static function fromXml(\SimpleXMLElement $xml): self
     {

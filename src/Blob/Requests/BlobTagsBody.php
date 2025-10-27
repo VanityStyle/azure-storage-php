@@ -10,11 +10,17 @@ namespace AzureOss\Storage\Blob\Requests;
 final class BlobTagsBody
 {
     /**
+     * @var array<string>
+     * @readonly
+     */
+    public array $tags;
+    /**
      * @param array<string> $tags
      */
-    public function __construct(
-        public readonly array $tags,
-    ) {}
+    public function __construct(array $tags)
+    {
+        $this->tags = $tags;
+    }
 
     public static function fromXml(\SimpleXMLElement $xml): self
     {

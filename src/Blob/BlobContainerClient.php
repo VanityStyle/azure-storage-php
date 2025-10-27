@@ -36,15 +36,34 @@ use Psr\Http\Message\UriInterface;
 
 final class BlobContainerClient
 {
+    /**
+     * @readonly
+     */
+    public UriInterface $uri;
+    /**
+     * @var \AzureOss\Storage\Common\Auth\StorageSharedKeyCredential|\AzureOss\Storage\Common\Auth\TokenCredential|null
+     * @readonly
+     */
+    public $credential = null;
+    /**
+     * @readonly
+     */
+    private BlobContainerClientOptions $options;
     public const ROOT_BLOB_CONTAINER_NAME = '$root';
 
     public const LOGS_BLOB_CONTAINER_NAME = '$logs';
 
     public const WEB_BLOB_CONTAINER_NAME = '$web';
 
-    private readonly Client $client;
+    /**
+     * @readonly
+     */
+    private Client $client;
 
-    public readonly string $containerName;
+    /**
+     * @readonly
+     */
+    public string $containerName;
 
     /**
      * @deprecated Use $credential instead.
@@ -53,12 +72,17 @@ final class BlobContainerClient
 
     /**
      * @throws InvalidBlobUriException
+     * @param \AzureOss\Storage\Common\Auth\StorageSharedKeyCredential|\AzureOss\Storage\Common\Auth\TokenCredential|null $credential
      */
     public function __construct(
-        public readonly UriInterface $uri,
-        public readonly StorageSharedKeyCredential|TokenCredential|null $credential = null,
-        private readonly BlobContainerClientOptions $options = new BlobContainerClientOptions(),
+        UriInterface $uri,
+        $credential = null,
+        ?BlobContainerClientOptions $options = null
     ) {
+        $options ??= new BlobContainerClientOptions();
+        $this->uri = $uri;
+        $this->credential = $credential;
+        $this->options = $options;
         $this->containerName = BlobUriParserHelper::getContainerName($uri);
         $this->client = (new ClientFactory())->create($uri, $credential, new BlobStorageExceptionDeserializer(), $this->options->httpClientOptions);
 
@@ -212,7 +236,7 @@ final class BlobContainerClient
                     'restype' => 'container',
                 ],
             ])
-            ->then(BlobContainerProperties::fromResponseHeaders(...));
+            ->then(\Closure::fromCallable([BlobContainerProperties::class, 'fromResponseHeaders']));
     }
 
     /**
@@ -245,7 +269,7 @@ final class BlobContainerClient
         $nextMarker = "";
 
         while (true) {
-            $response = $this->listBlobs($prefix, null, $nextMarker, $options?->pageSize);
+            $response = $this->listBlobs($prefix, null, $nextMarker, ($nullsafeVariable1 = $options) ? $nullsafeVariable1->pageSize : null);
             $nextMarker = $response->nextMarker;
 
             foreach ($response->blobs as $blob) {
@@ -267,7 +291,7 @@ final class BlobContainerClient
         $nextMarker = "";
 
         while (true) {
-            $response = $this->listBlobs($prefix, $delimiter, $nextMarker, $options?->pageSize);
+            $response = $this->listBlobs($prefix, $delimiter, $nextMarker, ($nullsafeVariable2 = $options) ? $nullsafeVariable2->pageSize : null);
             $nextMarker = $response->nextMarker;
 
             foreach ($response->blobs as $blob) {

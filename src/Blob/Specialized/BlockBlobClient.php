@@ -24,31 +24,59 @@ use Psr\Http\Message\UriInterface;
 
 final class BlockBlobClient
 {
-    private readonly Client $client;
+    /**
+     * @readonly
+     */
+    public UriInterface $uri;
+    /**
+     * @var \AzureOss\Storage\Common\Auth\StorageSharedKeyCredential|\AzureOss\Storage\Common\Auth\TokenCredential|null
+     * @readonly
+     */
+    public $credential = null;
+    /**
+     * @readonly
+     */
+    private Client $client;
 
-    public readonly string $containerName;
+    /**
+     * @readonly
+     */
+    public string $containerName;
 
-    public readonly string $blobName;
+    /**
+     * @readonly
+     */
+    public string $blobName;
 
     /**
      * @throws InvalidBlobUriException
+     * @param \AzureOss\Storage\Common\Auth\StorageSharedKeyCredential|\AzureOss\Storage\Common\Auth\TokenCredential|null $credential
      */
     public function __construct(
-        public readonly UriInterface $uri,
-        public readonly StorageSharedKeyCredential|TokenCredential|null $credential = null,
-        BlockBlobClientOptions $options = new BlockBlobClientOptions(),
+        UriInterface $uri,
+        $credential = null,
+        ?BlockBlobClientOptions $options = null
     ) {
+        $options ??= new BlockBlobClientOptions();
+        $this->uri = $uri;
+        $this->credential = $credential;
         $this->containerName = BlobUriParserHelper::getContainerName($uri);
         $this->blobName = BlobUriParserHelper::getBlobName($uri);
         $this->client = (new ClientFactory())->create($uri, $credential, new BlobStorageExceptionDeserializer(), $options->httpClientOptions);
     }
 
-    public function stageBlock(string $base64BlockId, StreamInterface|string $content, ?StageBlockOptions $options = null): void
+    /**
+     * @param \Psr\Http\Message\StreamInterface|string $content
+     */
+    public function stageBlock(string $base64BlockId, $content, ?StageBlockOptions $options = null): void
     {
         $this->stageBlockAsync($base64BlockId, $content, $options)->wait();
     }
 
-    public function stageBlockAsync(string $base64BlockId, StreamInterface|string $content, ?StageBlockOptions $options = null): PromiseInterface
+    /**
+     * @param \Psr\Http\Message\StreamInterface|string $content
+     */
+    public function stageBlockAsync(string $base64BlockId, $content, ?StageBlockOptions $options = null): PromiseInterface
     {
         $stream = Utils::streamFor($content);
 

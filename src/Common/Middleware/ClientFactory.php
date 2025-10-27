@@ -18,8 +18,12 @@ use Psr\Http\Message\UriInterface;
  */
 final class ClientFactory
 {
-    public function create(?UriInterface $uri = null, StorageSharedKeyCredential|TokenCredential|null $credential = null, ?RequestExceptionDeserializer $exceptionDeserializer = null, HttpClientOptions $options = new HttpClientOptions()): Client
+    /**
+     * @param \AzureOss\Storage\Common\Auth\StorageSharedKeyCredential|\AzureOss\Storage\Common\Auth\TokenCredential|null $credential
+     */
+    public function create(?UriInterface $uri = null, $credential = null, ?RequestExceptionDeserializer $exceptionDeserializer = null, HttpClientOptions $options = null): Client
     {
+        $options ??= new HttpClientOptions();
         $handlerStack = HandlerStack::create();
 
         if ($exceptionDeserializer !== null) {

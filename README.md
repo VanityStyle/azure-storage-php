@@ -11,7 +11,7 @@
 
 ## Minimum Requirements
 
-* PHP 8.1 or above
+* PHP 7.4 or above
 * Required PHP extensions
     * curl
     * json

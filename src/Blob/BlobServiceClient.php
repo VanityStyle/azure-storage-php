@@ -28,18 +28,38 @@ use Psr\Http\Message\UriInterface;
 
 final class BlobServiceClient
 {
-    private readonly Client $client;
+    public UriInterface $uri;
+    /**
+     * @var \AzureOss\Storage\Common\Auth\StorageSharedKeyCredential|\AzureOss\Storage\Common\Auth\TokenCredential|null
+     * @readonly
+     */
+    public $credential = null;
+    /**
+     * @readonly
+     */
+    private BlobServiceClientOptions $options;
+    /**
+     * @readonly
+     */
+    private Client $client;
 
     /**
      * @deprecated Use $credential instead.
      */
     public ?StorageSharedKeyCredential $sharedKeyCredentials = null;
 
+    /**
+     * @param \AzureOss\Storage\Common\Auth\StorageSharedKeyCredential|\AzureOss\Storage\Common\Auth\TokenCredential|null $credential
+     */
     public function __construct(
-        public UriInterface $uri,
-        public readonly StorageSharedKeyCredential|TokenCredential|null $credential = null,
-        private readonly BlobServiceClientOptions $options = new BlobServiceClientOptions(),
+        UriInterface $uri,
+        $credential = null,
+        ?BlobServiceClientOptions $options = null
     ) {
+        $options ??= new BlobServiceClientOptions();
+        $this->uri = $uri;
+        $this->credential = $credential;
+        $this->options = $options;
         // must always include the forward slash (/) to separate the host name from the path and query portions of the URI.
         $this->uri = $uri->withPath(rtrim($uri->getPath(), '/') . "/");
         $this->client = (new ClientFactory())->create($this->uri, $credential, new BlobStorageExceptionDeserializer(), $this->options->httpClientOptions);
@@ -50,8 +70,9 @@ final class BlobServiceClient
         }
     }
 
-    public static function fromConnectionString(string $connectionString, BlobServiceClientOptions $options = new BlobServiceClientOptions()): self
+    public static function fromConnectionString(string $connectionString, BlobServiceClientOptions $options = null): self
     {
+        $options ??= new BlobServiceClientOptions();
         $uri = ConnectionStringHelper::getBlobEndpoint($connectionString);
         if ($uri === null) {
             throw new InvalidConnectionStringException();
@@ -59,7 +80,7 @@ final class BlobServiceClient
 
         $sas = ConnectionStringHelper::getSas($connectionString);
         if ($sas !== null) {
-            return new self($uri->withQuery($sas), options: $options);
+            return new self($uri->withQuery($sas), null, $options);
         }
 
         $accountName = ConnectionStringHelper::getAccountName($connectionString);
@@ -154,7 +175,7 @@ final class BlobServiceClient
         }
 
         $sas = $accountSasBuilder
-            ->setServices(new AccountSasServices(blob: true))
+            ->setServices(new AccountSasServices(true))
             ->build($this->credential);
 
         return new Uri("$this->uri?$sas");

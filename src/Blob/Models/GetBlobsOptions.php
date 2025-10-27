@@ -6,7 +6,9 @@ namespace AzureOss\Storage\Blob\Models;
 
 final class GetBlobsOptions
 {
-    public function __construct(
-        public ?int $pageSize = null,
-    ) {}
+    public ?int $pageSize = null;
+    public function __construct(?int $pageSize = null)
+    {
+        $this->pageSize = $pageSize;
+    }
 }

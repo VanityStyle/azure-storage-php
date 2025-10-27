@@ -11,10 +11,19 @@ use AzureOss\Storage\Common\Exceptions\InvalidAccountKeyException;
  */
 final class StorageSharedKeyCredential
 {
-    public function __construct(
-        public readonly string $accountName,
-        public readonly string $accountKey,
-    ) {}
+    /**
+     * @readonly
+     */
+    public string $accountName;
+    /**
+     * @readonly
+     */
+    public string $accountKey;
+    public function __construct(string $accountName, string $accountKey)
+    {
+        $this->accountName = $accountName;
+        $this->accountKey = $accountKey;
+    }
 
     /**
      * @throws InvalidAccountKeyException

@@ -10,19 +10,13 @@ use PHPUnit\Framework\TestCase;
 
 class AccountSasResourceTypesTest extends TestCase
 {
-    #[Test]
     public function to_string_works(): void
     {
         $resource = new AccountSasResourceTypes();
-
         self::assertEquals("", (string) $resource);
-
-        $resource = new AccountSasResourceTypes(container: true);
-
+        $resource = new AccountSasResourceTypes(false, true);
         self::assertEquals("c", (string) $resource);
-
-        $resource = new AccountSasResourceTypes(service: true, container: true, object: true);
-
+        $resource = new AccountSasResourceTypes(true, true, true);
         self::assertEquals("sco", (string) $resource);
     }
 }

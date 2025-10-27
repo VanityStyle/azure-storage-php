@@ -13,13 +13,24 @@ use SimpleXMLElement;
 final class FindBlobsByTagBody
 {
     /**
+     * @var string
+     * @readonly
+     */
+    public string $nextMarker;
+    /**
+     * @var TaggedBlob[]
+     * @readonly
+     */
+    public array $blobs;
+    /**
      * @param string $nextMarker
      * @param TaggedBlob[] $blobs
      */
-    private function __construct(
-        public readonly string $nextMarker,
-        public readonly array $blobs,
-    ) {}
+    private function __construct(string $nextMarker, array $blobs)
+    {
+        $this->nextMarker = $nextMarker;
+        $this->blobs = $blobs;
+    }
 
     public static function fromXml(SimpleXMLElement $xml): self
     {

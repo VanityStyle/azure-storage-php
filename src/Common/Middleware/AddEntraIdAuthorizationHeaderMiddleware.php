@@ -13,9 +13,16 @@ use Psr\Http\Message\RequestInterface;
  */
 final class AddEntraIdAuthorizationHeaderMiddleware
 {
+    /**
+     * @readonly
+     */
+    private TokenCredential $tokenCredential;
     private ?AccessToken $cachedAccessToken = null;
 
-    public function __construct(private readonly TokenCredential $tokenCredential) {}
+    public function __construct(TokenCredential $tokenCredential)
+    {
+        $this->tokenCredential = $tokenCredential;
+    }
 
     public function __invoke(callable $handler): \Closure
     {

@@ -13,7 +13,7 @@ final class DateHelper
 {
     public static function formatAs8601Zulu(\DateTimeInterface $date): string
     {
-        return \DateTime::createFromInterface($date)
+        return (clone $date)
             ->setTimezone(new \DateTimeZone('UTC'))
             ->format('Y-m-d\TH:i:s\Z');
     }

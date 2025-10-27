@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace AzureOss\Storage\Blob\Models;
 
-enum PublicAccessType: string
+class PublicAccessType
 {
-    case NONE = 'none';
-    case BLOB = 'blob';
-    case CONTAINER = 'container';
+    public const NONE = 'none';
+    public const BLOB = 'blob';
+    public const CONTAINER = 'container';
 }

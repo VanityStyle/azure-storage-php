@@ -6,10 +6,19 @@ namespace AzureOss\Storage\Common\Middleware;
 
 final class HttpClientOptions
 {
-    public function __construct(
-        public readonly ?int $timeout = null,
-        public readonly ?int $connectTimeout = null,
-    ) {}
+    /**
+     * @readonly
+     */
+    public ?int $timeout = null;
+    /**
+     * @readonly
+     */
+    public ?int $connectTimeout = null;
+    public function __construct(?int $timeout = null, ?int $connectTimeout = null)
+    {
+        $this->timeout = $timeout;
+        $this->connectTimeout = $connectTimeout;
+    }
 
     /**
      * @return array{timeout?: int, connect_timeout?: int}

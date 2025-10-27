@@ -12,18 +12,20 @@ use Psr\Http\Message\RequestInterface;
  */
 final class AddDefaultQueryParamsMiddleware
 {
-    public function __construct(
-        private readonly string $defaultQuery,
-    ) {}
+    /**
+     * @readonly
+     */
+    private string $defaultQuery;
+    public function __construct(string $defaultQuery)
+    {
+        $this->defaultQuery = $defaultQuery;
+    }
 
     public function __invoke(callable $handler): \Closure
     {
         return function (RequestInterface $request, array $options) use ($handler) {
             $newUri = $request->getUri()->withQuery(
-                Query::build([
-                    ...Query::parse($this->defaultQuery),
-                    ...Query::parse($request->getUri()->getQuery()),
-                ]),
+                Query::build(array_merge(Query::parse($this->defaultQuery), Query::parse($request->getUri()->getQuery()))),
             );
 
             return $handler($request->withUri($newUri), $options);

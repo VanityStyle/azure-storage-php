@@ -8,16 +8,25 @@ use Psr\Http\Message\ResponseInterface;
 
 final class BlobCopyResult
 {
-    private function __construct(
-        public readonly string $copyId,
-        public readonly CopyStatus $copyStatus,
-    ) {}
+    /**
+     * @readonly
+     */
+    public string $copyId;
+    /**
+     * @readonly
+     */
+    public string $copyStatus;
+    private function __construct(string $copyId, string $copyStatus)
+    {
+        $this->copyId = $copyId;
+        $this->copyStatus = $copyStatus;
+    }
 
     public static function fromResponse(ResponseInterface $response): self
     {
         return new self(
             $response->getHeaderLine('x-ms-copy-id'),
-            CopyStatus::from($response->getHeaderLine('x-ms-copy-status')),
+            $response->getHeaderLine('x-ms-copy-status'),
         );
     }
 }

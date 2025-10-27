@@ -8,7 +8,13 @@ use AzureOss\Storage\Common\Middleware\HttpClientOptions;
 
 final class BlobClientOptions
 {
-    public function __construct(
-        public readonly HttpClientOptions $httpClientOptions = new HttpClientOptions(),
-    ) {}
+    /**
+     * @readonly
+     */
+    public HttpClientOptions $httpClientOptions;
+    public function __construct(?HttpClientOptions $httpClientOptions = null)
+    {
+        $httpClientOptions ??= new HttpClientOptions();
+        $this->httpClientOptions = $httpClientOptions;
+    }
 }

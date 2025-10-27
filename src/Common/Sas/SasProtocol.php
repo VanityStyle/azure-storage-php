@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace AzureOss\Storage\Common\Sas;
 
-enum SasProtocol: string
+class SasProtocol
 {
-    case HTTPS = "https";
-    case HTTPS_AND_HTTP = "https,http";
+    public const HTTPS = "https";
+    public const HTTPS_AND_HTTP = "https,http";
 }

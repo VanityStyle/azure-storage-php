@@ -6,22 +6,37 @@ namespace AzureOss\Storage\Blob\Sas;
 
 final class BlobSasPermissions
 {
-    public function __construct(
-        public bool $read = false,
-        public bool $add = false,
-        public bool $create = false,
-        public bool $write = false,
-        public bool $delete = false,
-        public bool $deleteVersion = false,
-        public bool $permanentDelete = false,
-        public bool $tags = false,
-        public bool $list = false,
-        public bool $move = false,
-        public bool $execute = false,
-        public bool $ownership = false,
-        public bool $permissions = false,
-        public bool $setImmutabilityPolicy = false,
-    ) {}
+    public bool $read = false;
+    public bool $add = false;
+    public bool $create = false;
+    public bool $write = false;
+    public bool $delete = false;
+    public bool $deleteVersion = false;
+    public bool $permanentDelete = false;
+    public bool $tags = false;
+    public bool $list = false;
+    public bool $move = false;
+    public bool $execute = false;
+    public bool $ownership = false;
+    public bool $permissions = false;
+    public bool $setImmutabilityPolicy = false;
+    public function __construct(bool $read = false, bool $add = false, bool $create = false, bool $write = false, bool $delete = false, bool $deleteVersion = false, bool $permanentDelete = false, bool $tags = false, bool $list = false, bool $move = false, bool $execute = false, bool $ownership = false, bool $permissions = false, bool $setImmutabilityPolicy = false)
+    {
+        $this->read = $read;
+        $this->add = $add;
+        $this->create = $create;
+        $this->write = $write;
+        $this->delete = $delete;
+        $this->deleteVersion = $deleteVersion;
+        $this->permanentDelete = $permanentDelete;
+        $this->tags = $tags;
+        $this->list = $list;
+        $this->move = $move;
+        $this->execute = $execute;
+        $this->ownership = $ownership;
+        $this->permissions = $permissions;
+        $this->setImmutabilityPolicy = $setImmutabilityPolicy;
+    }
 
     public function __toString(): string
     {

@@ -10,19 +10,13 @@ use PHPUnit\Framework\TestCase;
 
 class AccountSasServicesTest extends TestCase
 {
-    #[Test]
     public function to_string_works(): void
     {
         $services = new AccountSasServices();
-
         self::assertEquals("", (string) $services);
-
-        $services = new AccountSasServices(queue: true);
-
+        $services = new AccountSasServices(false, true);
         self::assertEquals("q", (string) $services);
-
-        $services = new AccountSasServices(blob: true, queue: true, table: true, file: true);
-
+        $services = new AccountSasServices(true, true, true, true);
         self::assertEquals("bqtf", (string) $services);
     }
 }

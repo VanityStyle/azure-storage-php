@@ -57,7 +57,10 @@ final class BlobSasBuilder
         return $this;
     }
 
-    public function setPermissions(string|BlobSasPermissions|BlobContainerSasPermissions $value): self
+    /**
+     * @param string|\AzureOss\Storage\Blob\Sas\BlobSasPermissions|\AzureOss\Storage\Blob\Sas\BlobContainerSasPermissions $value
+     */
+    public function setPermissions($value): self
     {
         $this->permissions = (string) $value;
 
@@ -158,8 +161,8 @@ final class BlobSasBuilder
         $signedExpiry = DateHelper::formatAs8601Zulu($this->expiresOn);
         $signedResource = $this->blobName !== null ? "b" : "c";
         $signedIp = $this->ipRange !== null ? (string) $this->ipRange : null;
-        $signedProtocol = $this->protocol?->value;
-        $signedVersion = $this->version ?? ApiVersion::LATEST->value;
+        $signedProtocol = ($nullsafeVariable1 = $this->protocol) ? $nullsafeVariable1->value : null;
+        $signedVersion = $this->version ?? ApiVersion::LATEST;
         $signedSnapshotTime = $this->snapshotTime !== null ? (string) $this->snapshotTime->getTimestamp() : null;
         $canonicalizedResource = $this->getCanonicalizedResource($sharedKeyCredential->accountName);
 

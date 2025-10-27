@@ -33,7 +33,7 @@ final class MetadataHelper
         $metadata = [];
 
         foreach ($headers as $key => $value) {
-            if (str_starts_with($key, "x-ms-meta-")) {
+            if (strncmp($key, "x-ms-meta-", strlen("x-ms-meta-")) === 0) {
                 $metadata[substr($key, strlen("x-ms-meta-"))] = implode(', ', $value);
             }
         }
